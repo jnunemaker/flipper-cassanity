@@ -4,6 +4,8 @@ require 'cassanity'
 module Flipper
   module Adapters
     class Cassanity
+      include Flipper::Adapter
+
       # Private: The key that stores the set of known features.
       FeaturesKey = :flipper_features
 
