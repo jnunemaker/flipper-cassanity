@@ -1,4 +1,13 @@
 source 'https://rubygems.org'
-
-# Specify your gem's dependencies in flipper-cassanity.gemspec
 gemspec
+
+gem 'flipper', :git => 'git://github.com/jnunemaker/flipper.git'
+gem 'rake'
+gem 'rspec'
+
+group(:guard) do
+  gem 'guard'
+  gem 'guard-rspec'
+  gem 'guard-bundler'
+  gem 'rb-fsevent'
+end
