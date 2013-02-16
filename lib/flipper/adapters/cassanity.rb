@@ -1,3 +1,4 @@
+require 'set'
 require 'flipper'
 require 'cassanity'
 
@@ -36,9 +37,9 @@ module Flipper
           when :boolean, :integer
             doc[gate.key.to_s]
           when :set
-            fields_to_gate_value(fields, gate)
+            fields_to_gate_value fields, gate
           else
-            unsupported_data_type(gate.data_type)
+            unsupported_data_type gate.data_type
           end
         end
 
@@ -59,7 +60,7 @@ module Flipper
         when :set
           update feature.key, to_field(gate, thing), thing.value.to_s
         else
-          unsupported_data_type(gate.data_type)
+          unsupported_data_type gate.data_type
         end
 
         true
@@ -81,7 +82,7 @@ module Flipper
         when :set
           delete feature.key, to_field(gate, thing)
         else
-          unsupported_data_type(gate.data_type)
+          unsupported_data_type gate.data_type
         end
 
         true
@@ -99,7 +100,7 @@ module Flipper
         rows.map { |row| row['field'] }.to_set
       end
 
-      # Private
+      # Private: Converts gate and thing to hash key.
       def to_field(gate, thing)
         "#{gate.key}/#{thing.value}"
       end
@@ -151,7 +152,7 @@ module Flipper
         Hash[*field_value_pairs.flatten]
       end
 
-      # Private: Returns a set for a gate based on an array of fields/values.
+      # Private: Returns a set of values given an array of fields and a gate.
       #
       # Returns a Set of the values enabled for the gate.
       def fields_to_gate_value(fields, gate)
