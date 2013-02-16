@@ -1,0 +1,11 @@
+language: ruby
+rvm:
+  - 1.8.7
+  - ree
+  - 1.9.3
+notifications:
+  email: false
+bundler_args: --without guard
+before_script: sudo service cassandra status
+services:
+ - cassandra
