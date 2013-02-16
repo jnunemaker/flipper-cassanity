@@ -4,6 +4,7 @@ gemspec
 gem 'flipper', :git => 'git://github.com/jnunemaker/flipper.git'
 gem 'rake'
 gem 'rspec'
+gem 'activesupport', :require => false
 
 group(:guard) do
   gem 'guard'
