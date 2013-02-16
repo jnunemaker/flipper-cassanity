@@ -5,32 +5,21 @@ A [Cassanity](https://github.com/jnunemaker/cassanity) adapter for [Flipper](htt
 ## Usage
 
 ```ruby
+# Assumes keyspace created and column family exists with this schema:
+#   {
+#     primary_key: [:key, :field],
+#     columns: {
+#       key: :text,
+#       field: :text,
+#       value: :text,
+#     },
+#   }
+
 require 'flipper/adapters/cassanity'
-
-# setup client, keyspace, and column family
-client = Cassanity::Client.new
-keyspace = client.keyspace(:cassanity)
-column_family = keyspace.column_family({
-  name: :flipper,
-  schema: {
-    primary_key: [:key, :field],
-    columns: {
-      key: :text,
-      field: :text,
-      value: :text,
-    },
-  },
-})
-
-# just making sure these exist in cassandra
-keyspace.recreate
-column_family.create
-
-# now the part that actually sets up this gem
+column_family = Cassanity::Client.new[:cassanity][:flipper]
 adapter = Flipper::Adapters::Cassanity.new(column_family)
-
-# :boom: you are good to go, flip away
 flipper = Flipper.new(adapter)
+# profit...
 ```
 
 ## Installation
