@@ -1,32 +1,36 @@
-# Flipper::Cassanity
+# Nothing to see here... move along.
+# Sets up load path for examples and requires some stuff
+require 'pp'
+require 'pathname'
+require 'logger'
 
-A [Cassanity](https://github.com/jnunemaker/cassanity) adapter for [Flipper](https://github.com/jnunemaker/flipper).
-
-## Usage
-
-```ruby
-# Assumes keyspace created and column family exists with this schema:
-#   {
-#     primary_key: [:key, :field],
-#     columns: {
-#       key: :text,
-#       field: :text,
-#       value: :text,
-#     },
-#   }
+root_path = Pathname(__FILE__).dirname.join('..').expand_path
+lib_path  = root_path.join('lib')
+$:.unshift(lib_path)
 
 require 'flipper/adapters/cassanity'
-column_family = Cassanity::Client.new[:cassanity][:flipper]
-adapter = Flipper::Adapters::Cassanity.new(column_family)
-flipper = Flipper.new(adapter)
-# profit...
-```
+require 'cassanity/instrumentation/log_subscriber'
+Cassanity::Instrumentation::LogSubscriber.logger = Logger.new(STDOUT, Logger::DEBUG)
 
-## Internals
+client = Cassanity::Client.new('127.0.0.1:9160', {
+  instrumenter: ActiveSupport::Notifications,
+})
+keyspace = client.keyspace(:cassanity)
+column_family = keyspace.column_family({
+  name: :flipper,
+  schema: {
+    primary_key: [:key, :field],
+    columns: {
+      key: :text,
+      field: :text,
+      value: :text,
+    },
+  },
+})
 
-```ruby
-require 'flipper/adapters/cassanity'
-column_family = Cassanity::Client.new[:cassanity][:flipper]
+keyspace.recreate
+column_family.create
+
 adapter = Flipper::Adapters::Cassanity.new(column_family)
 flipper = Flipper.new(adapter)
 
@@ -69,26 +73,3 @@ pp adapter.get(flipper[:stats])
 #  :actors=>#<Set: {"25", "90", "180"}>,
 #  :percentage_of_actors=>"45",
 #  :percentage_of_random=>"15"}
-```
-
-## Installation
-
-Add this line to your application's Gemfile:
-
-    gem 'flipper-cassanity'
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install flipper-cassanity
-
-## Contributing
-
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
