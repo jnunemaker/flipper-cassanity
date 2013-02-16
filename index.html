@@ -1,0 +1,139 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Flipper Cassanity by jnunemaker</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Flipper Cassanity</h1>
+        <p>Cassanity adapter for Flipper.</p>
+
+        <p class="view"><a href="https://github.com/jnunemaker/flipper-cassanity">View the Project on GitHub <small>jnunemaker/flipper-cassanity</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/jnunemaker/flipper-cassanity/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/jnunemaker/flipper-cassanity/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/jnunemaker/flipper-cassanity">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>Flipper::Cassanity</h1>
+
+<p>A <a href="https://github.com/jnunemaker/cassanity">Cassanity</a> adapter for <a href="https://github.com/jnunemaker/flipper">Flipper</a>.</p>
+
+<h2>Installation</h2>
+
+<p>Add this line to your application's Gemfile:</p>
+
+<pre><code>gem 'flipper-cassanity'
+</code></pre>
+
+<p>And then execute:</p>
+
+<pre><code>$ bundle
+</code></pre>
+
+<p>Or install it yourself as:</p>
+
+<pre><code>$ gem install flipper-cassanity
+</code></pre>
+
+<h2>Usage</h2>
+
+<div class="highlight"><pre><span class="c1"># Assumes keyspace created and column family exists with this schema:</span>
+<span class="c1">#   {</span>
+<span class="c1">#     primary_key: [:key, :field],</span>
+<span class="c1">#     columns: {</span>
+<span class="c1">#       key: :text,</span>
+<span class="c1">#       field: :text,</span>
+<span class="c1">#       value: :text,</span>
+<span class="c1">#     },</span>
+<span class="c1">#   }</span>
+
+<span class="nb">require</span> <span class="s1">'flipper/adapters/cassanity'</span>
+<span class="n">column_family</span> <span class="o">=</span> <span class="no">Cassanity</span><span class="o">::</span><span class="no">Client</span><span class="o">.</span><span class="n">new</span><span class="o">[</span><span class="ss">:cassanity</span><span class="o">][</span><span class="ss">:flipper</span><span class="o">]</span>
+<span class="n">adapter</span> <span class="o">=</span> <span class="no">Flipper</span><span class="o">::</span><span class="no">Adapters</span><span class="o">::</span><span class="no">Cassanity</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">column_family</span><span class="p">)</span>
+<span class="n">flipper</span> <span class="o">=</span> <span class="no">Flipper</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">adapter</span><span class="p">)</span>
+<span class="c1"># profit...</span>
+</pre></div>
+
+<h2>Internals</h2>
+
+<p>Each feature is stored in a single row, which means getting a feature is single query.</p>
+
+<div class="highlight"><pre><span class="nb">require</span> <span class="s1">'flipper/adapters/cassanity'</span>
+<span class="n">column_family</span> <span class="o">=</span> <span class="no">Cassanity</span><span class="o">::</span><span class="no">Client</span><span class="o">.</span><span class="n">new</span><span class="o">[</span><span class="ss">:cassanity</span><span class="o">][</span><span class="ss">:flipper</span><span class="o">]</span>
+<span class="n">adapter</span> <span class="o">=</span> <span class="no">Flipper</span><span class="o">::</span><span class="no">Adapters</span><span class="o">::</span><span class="no">Cassanity</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">column_family</span><span class="p">)</span>
+<span class="n">flipper</span> <span class="o">=</span> <span class="no">Flipper</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">adapter</span><span class="p">)</span>
+
+<span class="c1"># Register a few groups.</span>
+<span class="no">Flipper</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="ss">:admins</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">thing</span><span class="o">|</span> <span class="n">thing</span><span class="o">.</span><span class="n">admin?</span> <span class="p">}</span>
+<span class="no">Flipper</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="ss">:early_access</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">thing</span><span class="o">|</span> <span class="n">thing</span><span class="o">.</span><span class="n">early_access?</span> <span class="p">}</span>
+
+<span class="c1"># Create a user class that has flipper_id instance method.</span>
+<span class="no">User</span> <span class="o">=</span> <span class="no">Struct</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">:flipper_id</span><span class="p">)</span>
+
+<span class="n">flipper</span><span class="o">[</span><span class="ss">:stats</span><span class="o">].</span><span class="n">enable</span>
+<span class="n">flipper</span><span class="o">[</span><span class="ss">:stats</span><span class="o">].</span><span class="n">enable</span> <span class="n">flipper</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="ss">:admins</span><span class="p">)</span>
+<span class="n">flipper</span><span class="o">[</span><span class="ss">:stats</span><span class="o">].</span><span class="n">enable</span> <span class="n">flipper</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="ss">:early_access</span><span class="p">)</span>
+<span class="n">flipper</span><span class="o">[</span><span class="ss">:stats</span><span class="o">].</span><span class="n">enable</span> <span class="no">User</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">'25'</span><span class="p">)</span>
+<span class="n">flipper</span><span class="o">[</span><span class="ss">:stats</span><span class="o">].</span><span class="n">enable</span> <span class="no">User</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">'90'</span><span class="p">)</span>
+<span class="n">flipper</span><span class="o">[</span><span class="ss">:stats</span><span class="o">].</span><span class="n">enable</span> <span class="no">User</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">'180'</span><span class="p">)</span>
+<span class="n">flipper</span><span class="o">[</span><span class="ss">:stats</span><span class="o">].</span><span class="n">enable</span> <span class="n">flipper</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="mi">15</span><span class="p">)</span>
+<span class="n">flipper</span><span class="o">[</span><span class="ss">:stats</span><span class="o">].</span><span class="n">enable</span> <span class="n">flipper</span><span class="o">.</span><span class="n">actors</span><span class="p">(</span><span class="mi">45</span><span class="p">)</span>
+
+<span class="n">flipper</span><span class="o">[</span><span class="ss">:search</span><span class="o">].</span><span class="n">enable</span>
+
+<span class="nb">puts</span> <span class="s1">'all docs in collection'</span>
+<span class="n">pp</span> <span class="n">column_family</span><span class="o">.</span><span class="n">select</span>
+<span class="c1"># all docs in collection</span>
+<span class="c1"># [{"_id"=&gt;"stats",</span>
+<span class="c1">#   "actors"=&gt;["25", "90", "180"],</span>
+<span class="c1">#   "boolean"=&gt;"true",</span>
+<span class="c1">#   "groups"=&gt;["admins", "early_access"],</span>
+<span class="c1">#   "percentage_of_actors"=&gt;"45",</span>
+<span class="c1">#   "percentage_of_random"=&gt;"15"},</span>
+<span class="c1">#  {"_id"=&gt;"flipper_features", "features"=&gt;["stats", "search"]},</span>
+<span class="c1">#  {"_id"=&gt;"search", "boolean"=&gt;"true"}]</span>
+<span class="nb">puts</span>
+
+<span class="nb">puts</span> <span class="s1">'flipper get of feature'</span>
+<span class="n">pp</span> <span class="n">adapter</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">flipper</span><span class="o">[</span><span class="ss">:stats</span><span class="o">]</span><span class="p">)</span>
+<span class="c1"># flipper get of feature</span>
+<span class="c1"># {:boolean=&gt;"true",</span>
+<span class="c1">#  :groups=&gt;#&lt;Set: {"admins", "early_access"}&gt;,</span>
+<span class="c1">#  :actors=&gt;#&lt;Set: {"25", "90", "180"}&gt;,</span>
+<span class="c1">#  :percentage_of_actors=&gt;"45",</span>
+<span class="c1">#  :percentage_of_random=&gt;"15"}</span>
+</pre></div>
+
+<h2>Contributing</h2>
+
+<ol>
+<li>Fork it</li>
+<li>Create your feature branch (<code>git checkout -b my-new-feature</code>)</li>
+<li>Commit your changes (<code>git commit -am 'Add some feature'</code>)</li>
+<li>Push to the branch (<code>git push origin my-new-feature</code>)</li>
+<li>Create new Pull Request</li>
+</ol>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/jnunemaker">jnunemaker</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
