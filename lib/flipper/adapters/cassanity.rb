@@ -17,12 +17,25 @@ module Flipper
       def get(feature)
         result = {}
 
+        rows = @column_family.select({
+          where: {
+            key: feature.key,
+          },
+        })
+
         feature.gates.each do |gate|
           result[gate.key] = case gate.data_type
           when :boolean, :integer
-
+            if gate_row = rows.detect { |row| row['field'] == gate.key.to_s }
+              gate_row['value']
+            end
           when :set
-            Set.new
+            regex = /^#{Regexp.escape(gate.key)}\//
+
+            gate_rows = rows.select { |row| row['field'] =~ regex }
+            gate_keys = gate_rows.map { |row| row['field'] }
+            gate_values = gate_keys.map { |key| key.split('/', 2).last }
+            gate_values.to_set
           else
             unsupported_data_type(gate.data_type)
           end
@@ -40,12 +53,20 @@ module Flipper
               value: thing.value.to_s,
             },
             where: {
-              feature: feature.key.to_s,
-              gate: gate.key.to_s,
+              key: feature.key,
+              field: gate.key,
             },
           })
         when :set
-
+          @column_family.update({
+            set: {
+              value: 1,
+            },
+            where: {
+              key: feature.key,
+              field: "#{gate.key}/#{thing.value}",
+            },
+          })
         else
           unsupported_data_type(gate.data_type)
         end
@@ -57,11 +78,28 @@ module Flipper
       def disable(feature, gate, thing)
         case gate.data_type
         when :boolean
-
+          @column_family.delete({
+            where: {
+              key: feature.key,
+            },
+          })
         when :integer
-
+          @column_family.update({
+            set: {
+              value: thing.value.to_s,
+            },
+            where: {
+              key: feature.key,
+              field: gate.key,
+            },
+          })
         when :set
-
+          @column_family.delete({
+            where: {
+              key: feature.key,
+              field: "#{gate.key}/#{thing.value}"
+            },
+          })
         else
           unsupported_data_type(gate.data_type)
         end
@@ -71,13 +109,22 @@ module Flipper
 
       # Public: Adds a feature to the set of known features.
       def add(feature)
-
+        @column_family.update({
+          set: {
+            value: 1,
+          },
+          where: {
+            key: FeaturesKey,
+            field: feature.name,
+          },
+        })
         true
       end
 
       # Public: The set of known features.
       def features
-
+        rows = @column_family.select(where: {key: FeaturesKey.to_s})
+        rows.map { |row| row['field'] }.to_set
       end
 
       # Private

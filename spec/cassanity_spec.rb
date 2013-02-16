@@ -9,10 +9,10 @@ describe Flipper::Adapters::Cassanity do
     keyspace.column_family({
       name: :flipper,
       schema: {
-        primary_key: [:feature, :gate],
+        primary_key: [:key, :field],
         columns: {
-          feature: :text,
-          gate: :text,
+          key: :text,
+          field: :text,
           value: :text,
         },
       },
