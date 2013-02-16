@@ -2,6 +2,20 @@
 
 A [Cassanity](https://github.com/jnunemaker/cassanity) adapter for [Flipper](https://github.com/jnunemaker/flipper).
 
+## Installation
+
+Add this line to your application's Gemfile:
+
+    gem 'flipper-cassanity'
+
+And then execute:
+
+    $ bundle
+
+Or install it yourself as:
+
+    $ gem install flipper-cassanity
+
 ## Usage
 
 ```ruby
@@ -70,20 +84,6 @@ pp adapter.get(flipper[:stats])
 #  :percentage_of_actors=>"45",
 #  :percentage_of_random=>"15"}
 ```
-
-## Installation
-
-Add this line to your application's Gemfile:
-
-    gem 'flipper-cassanity'
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install flipper-cassanity
 
 ## Contributing
 
