@@ -18,6 +18,7 @@ module Flipper
         result = {}
 
         rows = @column_family.select({
+          select: [:field, :value],
           where: {
             key: feature.key,
           },
@@ -123,7 +124,10 @@ module Flipper
 
       # Public: The set of known features.
       def features
-        rows = @column_family.select(where: {key: FeaturesKey.to_s})
+        rows = @column_family.select({
+          select: [:field, :value],
+          where: {key: FeaturesKey.to_s},
+        })
         rows.map { |row| row['field'] }.to_set
       end
 
