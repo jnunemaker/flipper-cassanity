@@ -38,6 +38,8 @@ flipper = Flipper.new(adapter)
 
 ## Internals
 
+Each feature is stored in a single row, which means getting a feature is single query.
+
 ```ruby
 require 'flipper/adapters/cassanity'
 column_family = Cassanity::Client.new[:cassanity][:flipper]
