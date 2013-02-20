@@ -24,6 +24,31 @@ module Flipper
         @name = :cassanity
       end
 
+      # Public: The set of known features.
+      def features
+        rows = select(FeaturesKey)
+        rows.map { |row| row['field'] }.to_set
+      end
+
+      # Public: Adds a feature to the set of known features.
+      def add(feature)
+        update FeaturesKey, feature.name, 1
+        true
+      end
+
+      # Public: Adds a feature to the set of known features.
+      def remove(feature)
+        delete FeaturesKey, feature.name
+        clear feature
+        true
+      end
+
+      # Public: Clears all the gate values for a feature.
+      def clear(feature)
+        delete feature.key
+        true
+      end
+
       # Public: Gets the values for all gates for a given feature.
       #
       # Returns a Hash of Flipper::Gate#key => value.
@@ -86,18 +111,6 @@ module Flipper
         end
 
         true
-      end
-
-      # Public: Adds a feature to the set of known features.
-      def add(feature)
-        update FeaturesKey, feature.name, 1
-        true
-      end
-
-      # Public: The set of known features.
-      def features
-        rows = select(FeaturesKey)
-        rows.map { |row| row['field'] }.to_set
       end
 
       # Private: Converts gate and thing to hash key.
