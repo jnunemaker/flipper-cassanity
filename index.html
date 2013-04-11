@@ -62,8 +62,8 @@
 <span class="c1">#   }</span>
 
 <span class="nb">require</span> <span class="s1">'flipper/adapters/cassanity'</span>
-<span class="n">column_family</span> <span class="o">=</span> <span class="no">Cassanity</span><span class="o">::</span><span class="no">Client</span><span class="o">.</span><span class="n">new</span><span class="o">[</span><span class="ss">:cassanity</span><span class="o">][</span><span class="ss">:flipper</span><span class="o">]</span>
-<span class="n">adapter</span> <span class="o">=</span> <span class="no">Flipper</span><span class="o">::</span><span class="no">Adapters</span><span class="o">::</span><span class="no">Cassanity</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">column_family</span><span class="p">)</span>
+<span class="n">column_family</span> <span class="o">=</span> <span class="ss">Cassanity</span><span class="p">:</span><span class="ss">:Client</span><span class="o">.</span><span class="n">new</span><span class="o">[</span><span class="ss">:cassanity</span><span class="o">][</span><span class="ss">:flipper</span><span class="o">]</span>
+<span class="n">adapter</span> <span class="o">=</span> <span class="ss">Flipper</span><span class="p">:</span><span class="ss">:Adapters</span><span class="o">::</span><span class="no">Cassanity</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">column_family</span><span class="p">)</span>
 <span class="n">flipper</span> <span class="o">=</span> <span class="no">Flipper</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">adapter</span><span class="p">)</span>
 <span class="c1"># profit...</span>
 </pre></div>
@@ -73,8 +73,8 @@
 <p>Each feature is stored in a single row, which means getting a feature is single query.</p>
 
 <div class="highlight"><pre><span class="nb">require</span> <span class="s1">'flipper/adapters/cassanity'</span>
-<span class="n">column_family</span> <span class="o">=</span> <span class="no">Cassanity</span><span class="o">::</span><span class="no">Client</span><span class="o">.</span><span class="n">new</span><span class="o">[</span><span class="ss">:cassanity</span><span class="o">][</span><span class="ss">:flipper</span><span class="o">]</span>
-<span class="n">adapter</span> <span class="o">=</span> <span class="no">Flipper</span><span class="o">::</span><span class="no">Adapters</span><span class="o">::</span><span class="no">Cassanity</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">column_family</span><span class="p">)</span>
+<span class="n">column_family</span> <span class="o">=</span> <span class="ss">Cassanity</span><span class="p">:</span><span class="ss">:Client</span><span class="o">.</span><span class="n">new</span><span class="o">[</span><span class="ss">:cassanity</span><span class="o">][</span><span class="ss">:flipper</span><span class="o">]</span>
+<span class="n">adapter</span> <span class="o">=</span> <span class="ss">Flipper</span><span class="p">:</span><span class="ss">:Adapters</span><span class="o">::</span><span class="no">Cassanity</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">column_family</span><span class="p">)</span>
 <span class="n">flipper</span> <span class="o">=</span> <span class="no">Flipper</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">adapter</span><span class="p">)</span>
 
 <span class="c1"># Register a few groups.</span>
