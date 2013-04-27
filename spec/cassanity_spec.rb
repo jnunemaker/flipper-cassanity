@@ -3,7 +3,7 @@ require 'flipper/adapters/cassanity'
 require 'flipper/spec/shared_adapter_specs'
 
 describe Flipper::Adapters::Cassanity do
-  let(:client) { Cassanity::Client.new }
+  let(:client) { Cassanity::Client.new(ENV.fetch('CASSANDRA_HOST', '127.0.0.1:9160')) }
   let(:keyspace) { client.keyspace(:cassanity) }
   let(:column_family) {
     keyspace.column_family({

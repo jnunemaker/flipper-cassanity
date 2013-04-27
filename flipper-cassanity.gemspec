@@ -16,5 +16,5 @@ Gem::Specification.new do |gem|
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
 
   gem.add_dependency 'flipper', '~> 0.6.0'
-  gem.add_dependency 'cassanity', '~> 0.4.0'
+  gem.add_dependency 'cassanity', '~> 0.5.0'
 end
